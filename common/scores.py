@@ -47,3 +47,16 @@ def compute_expected_scores(R_a, R_b):
     E_b = Q_b / (Q_a + Q_b)
 
     return E_a, E_b
+
+def get_expected_result(player_a, player_b):
+    R_a = float(get_most_recent_score(player_a))
+    R_b = float(get_most_recent_score(player_b))
+    expected_score_fracs = compute_expected_scores(R_a, R_b)
+    return tuple(map(get_expected_result_from_expected_score_frac, expected_score_fracs))
+
+def get_expected_result_from_expected_score_frac(ex):
+    if ex < 0.5:
+        return 21 * ((1 / (1.0 - ex)) - 1)
+    else:
+        return 21.0
+
