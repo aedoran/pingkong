@@ -8,6 +8,10 @@ This file creates your application.
 
 import os
 from flask import Flask, render_template, request, redirect, url_for
+import common.matches
+import common.scores
+
+import time
 
 app = Flask(__name__)
 
@@ -28,6 +32,14 @@ def home():
 def about():
     """Render the website's about page."""
     return render_template('about.html')
+
+@app.route('/record_match', methods=['POST'])
+def record_match():
+    ts = int(time.time())
+    args = [request.form[arg] for arg in ['player_a', 'score_a', 'player_b', 'score_b']] \
+        + [ts]
+    match_id = common.matches.record_match(*args)
+    common.scores.update_scores(*(args + [match_id]))
 
 
 ###

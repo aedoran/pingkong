@@ -13,7 +13,7 @@ def get_most_recent_score(player):
     res = col.find_one({'player': player})
     return res['score'] if res else 1600 # obviously adjust this later
 
-def update_scores(player_a, score_a, player_b, score_b, match_id, match_ts):
+def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id):
     # http://en.wikipedia.org/wiki/Elo_rating_system#Mathematical_details
 
     # TODO - could parallelize this lookup with gevent...
