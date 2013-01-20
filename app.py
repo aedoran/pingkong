@@ -10,6 +10,8 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 import common.matches
 import common.scores
+from operator import itemgetter
+import json
 
 import time
 
@@ -40,6 +42,13 @@ def record_match():
         + [ts]
     match_id = common.matches.record_match(*args)
     common.scores.update_scores(*(args + [match_id]))
+
+@app.route('/leaderboard')
+def leaderboard():
+    players = common.scores.get_all_players()
+    recent_scores = map(common.scores.get_most_recent_score, players)
+    sorted_pairs = sorted(zip(players, recent_scores), key=itemgetter(1), reverse=True)
+    return json.dumps({'scores': sorted_pairs})
 
 
 ###

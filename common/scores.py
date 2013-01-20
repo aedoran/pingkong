@@ -60,3 +60,6 @@ def get_expected_result_from_expected_score_frac(ex, play_till=21.0):
     else:
         return play_till
 
+def get_all_players():
+    return connection.pingkong.scorings.distinct('player')
+
