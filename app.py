@@ -47,6 +47,11 @@ def leaderboard():
     sorted_pairs = sorted(zip(players, recent_scores), key=itemgetter(1), reverse=True)
     return json.dumps({'scores': sorted_pairs})
 
+@app.route('/predict/<player_a>:<player_b>')
+def predict(player_a, player_b):
+    data = common.scores.get_expected_result(player_a, player_b)
+    return json.dumps({'scores': dict(zip((player_a, player_b), data))})
+
 
 ###
 # The functions below should be applicable to all Flask apps.
