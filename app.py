@@ -6,19 +6,18 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template
 import common.matches
 import common.scores
-from operator import itemgetter
-import json
 
+from operator import itemgetter
+import os
+import json
 import time
 
+
 app = Flask(__name__)
-
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
-
 
 ###
 # Routing for your application.
@@ -29,19 +28,17 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
-
 @app.route('/about/')
 def about():
     """Render the website's about page."""
     return render_template('about.html')
 
-@app.route('/record_match', methods=['POST'])
-def record_match():
+@app.route('/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>/')
+def record_match(player_a, score_a, player_b, score_b):
     ts = int(time.time())
-    args = [request.form[arg] for arg in ['player_a', 'score_a', 'player_b', 'score_b']] \
-        + [ts]
-    match_id = common.matches.record_match(*args)
-    common.scores.update_scores(*(args + [match_id]))
+    match_id = common.matches.record_match(player_a, score_a, player_b, score_b, ts)
+    common.scores.update_scores(player_a, score_a, player_b, score_b, ts, match_id)
+    return json.dumps("OK")
 
 @app.route('/leaderboard')
 def leaderboard():
@@ -54,13 +51,6 @@ def leaderboard():
 ###
 # The functions below should be applicable to all Flask apps.
 ###
-
-@app.route('/<file_name>.txt')
-def send_text_file(file_name):
-    """Send your static text file."""
-    file_dot_text = file_name + '.txt'
-    return app.send_static_file(file_dot_text)
-
 
 @app.after_request
 def add_header(response):

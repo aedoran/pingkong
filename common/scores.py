@@ -29,15 +29,14 @@ def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id):
     new_R_b = R_b + K * (S_b - E_b)
 
     col = connection.pingkong.scorings
-    def mk_scorings_doc(player, score):
+    def mk_scorings_doc((player, score)):
         return {
             'player': player,
             'score': score,
             'match_id': match_id,
             'ts': match_ts
         }
-    col.insert(mk_scorings_doc(player_a, new_R_a))
-    col.insert(mk_scorings_doc(player_b, new_R_b))
+    map(col.insert, map(mk_scorings_doc, ((player_a, new_R_a), (player_b, new_R_b))))
 
 def compute_expected_scores(R_a, R_b):
     Q_a = 10 ** (R_a / 400)

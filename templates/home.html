@@ -1,9 +1,24 @@
 {% extends "base.html" %}
 
-
 {% block js %}
+<script type="text/javascript">
+    $.getJSON('/leaderboard', function(data) {
+        var items = [];
+        
+        $.each(data.scores, function(key, val) {
+            items.push('<li><span class="name">' + val[0] + '</span> - <span class="score">' + val[1].toFixed(2) + '</score></li>');
+        });
+        
+        $('<ol/>', {
+            html: items.join('')
+        }).appendTo('#leaderboard');
+    });
+</script>
 {% endblock %}
 
 
 {% block main %}
+<h1>Leaderboard</h1>
+<div id="leaderboard">
+</div>
 {% endblock %}
