@@ -40,8 +40,9 @@ def record_match(player_a, score_a, player_b, score_b):
     common.scores.update_scores(player_a, score_a, player_b, score_b, ts, match_id)
     return json.dumps("OK")
 
-@app.route('/leaderboard')
-def leaderboard():
+@app.route('/leaderboard', defaults={'limit' : 10})
+@app.route('/leaderboard/<int:limit>')
+def leaderboard(limit):
     players = common.scores.get_all_players()
     recent_scores = map(common.scores.get_most_recent_score, players)
     sorted_pairs = sorted(zip(players, recent_scores), key=itemgetter(1), reverse=True)
