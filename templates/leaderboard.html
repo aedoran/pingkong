@@ -1,7 +1,4 @@
-<!-- {% extends "base.html" %} -->
-
 {% block js %}
-    <script src="/static/js/pingkong.js"></script>
     <script>
         var leaderTemplate = new Template("<h1>#{user}</h1> - #{score}");
         leaderboard(function(data) {
@@ -17,10 +14,3 @@
 {% endblock %}
 
 
-{% block main %}
-<div class="container">
-    <div id="leaderboard">
-    <h1>Leaderboard</h1>
-    </div>
-</div>
-{% endblock %}

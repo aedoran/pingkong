@@ -9,3 +9,10 @@ body {
         color: #e6e6e6;
 }
 
+.large_vspace {
+    height: 100px;
+}
+
+#submit_status {
+    display: none;
+}

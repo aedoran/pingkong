@@ -4,11 +4,41 @@
 <link rel="stylesheet" href="/static/css/pingkong.css">
 {% endblock %}
 
+{% block js %}
+    {% include "leaderboard.html" %}
+    {% include "record_match.html" %}
+{% endblock %}
+
+
 {% block main %}
 <div class="container">
     <div class="pingkongcontent">
-        {% include "leaderboard.html" %}
-        {% include "record_match.html" %}
+        <div class="container">
+            <div id="leaderboard">
+            <h1>Leaderboard</h1>
+            </div>
+        </div>
+
+        <div class="large_vspace">&nbsp;</div>
+
+        <div id="record">
+            <h1>Record Match</h1>
+            <form action="#">
+                <select data-placeholder="player name" id="playera_name" class="chzn-select">
+                    <option></option>
+                </select>
+                <input type=text id=playera_score placeholder="score">
+                <br>
+                <select id="playerb_name" class="chzn-select" data-placeholder="player name">
+                    <option></option>
+                </select>
+                <input type=text id=playerb_score placeholder="score">
+                <br>
+                <button class="btn" onClick="submit_scores();" id="submit_button">record!</button>
+                <button class="btn btn-info" id="submit_status"></div>
+            <form>
+        </div>
+
     </div>
 </div>
 {% endblock %}

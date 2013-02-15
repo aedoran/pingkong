@@ -1,18 +1,16 @@
-<!-- {% extends "base.html" %} -->
-
 {% block js %}
-    <script src="/static/js/pingkong.js"></script>
     <script>
-        jQuery(".chzn-select").chosen({no_results_text: "User not found"});
         function add_options(elem, opts) {
             jQuery.each(opts, function(key, value) {   
+                console.log("adding to ", elem)
                  jQuery(elem)
                      .append(jQuery("<option></option>")
                      .attr("value", value.id)
                      .text(value.name));
             });
-            jQuery(elem)
-                .trigger("liszt:updated");
+            jQuery(elem).chosen({no_results_text: "User not found"});
+            //jQuery(elem)
+            //    .trigger("liszt:updated");
         }
         getAllUsers(function(data) { 
             add_options("#playera_name", data);
@@ -20,7 +18,7 @@
         });
 
         function submit_scores() {
-            jQuery("#submit_status").html("Submitting....");
+            jQuery("#submit_status").html("Submitting....").show();
             jQuery("#submit_button").prop("disabled", true);
             var playerA = {name: jQuery("#playera_name").val(), score: jQuery("#playera_score").val()}
             var playerB = {name: jQuery("#playerb_name").val(), score: jQuery("#playerb_score").val()}
@@ -40,10 +38,9 @@
             }
 
             recordMatch(playerA, playerB, function(d) {
-                jQuery("#submit_status").html("Recorded!").fadeOut(5000, function() {
+                jQuery("#submit_status").html("Recorded!").fadeOut(10000, function() {
                     jQuery("#submit_status")
-                        .html("")
-                        .show();
+                        .html("");
                 });
                 jQuery("#submit_button").prop("disabled", false);
             });
@@ -53,23 +50,3 @@
     </script>
 {% endblock %}
 
-
-{% block main %}
-<div id="record">
-<h1>Record Match</h1>
-<form action="#">
-    <select data-placeholder="player name" id="playera_name" class="chzn-select">
-        <option></option>
-    </select>
-    <input type=text id=playera_score placeholder="score">
-    <br>
-    <select id="playerb_name" class="chzn-select" data-placeholder="player name">
-        <option></option>
-    </select>
-    <input type=text id=playerb_score placeholder="score">
-    <br>
-    <button onClick="submit_scores();" id="submit_button">record!</button>
-    <div id="submit_status"></div>
-<form>
-</div>
-{% endblock %}
