@@ -33,3 +33,6 @@ pip-log.txt
 *.py[co]
 *.rbc
 *.sw[op]
+
+# secret shit
+scripts/local_env.sh
