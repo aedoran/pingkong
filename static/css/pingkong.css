@@ -9,8 +9,20 @@ body {
         color: #f5f5f5;
 }
 
+.pingkongcontent .leader_name {
+    display: inline;
+}
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: #2c2c2c;
+}
+
 .large_vspace {
     height: 100px;
+}
+
+.small_vspace {
+    height: 50px;
 }
 
 #submit_status {
