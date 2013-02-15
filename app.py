@@ -28,13 +28,21 @@ def index():
     """Render website's home page."""
     return render_template('index.html')
 
+@app.route('/leaderboard')
+def leaderboard():
+    return render_template('leaderboard.html')
+
+@app.route('/record_match')
+def record_match():
+    return render_template('record_match.html')
+
 @app.route('/about/')
 def about():
     """Render the website's about page."""
     return render_template('about.html')
 
 @app.route('/api/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>/')
-def record_match(player_a, score_a, player_b, score_b):
+def api_record_match(player_a, score_a, player_b, score_b):
     ts = int(time.time())
     match_id = common.matches.record_match(player_a, score_a, player_b, score_b, ts)
     common.scores.update_scores(player_a, score_a, player_b, score_b, ts, match_id)
@@ -42,14 +50,14 @@ def record_match(player_a, score_a, player_b, score_b):
 
 @app.route('/api/leaderboard', defaults={'limit' : 10})
 @app.route('/api/leaderboard/<int:limit>')
-def leaderboard(limit):
+def api_leaderboard(limit):
     players = common.scores.get_all_players()
     recent_scores = map(common.scores.get_most_recent_score, players)
     sorted_pairs = sorted(zip(players, recent_scores), key=itemgetter(1), reverse=True)
     return json.dumps({'scores': sorted_pairs})
 
 @app.route('/api/predict/<player_a>:<player_b>')
-def predict(player_a, player_b):
+def api_predict(player_a, player_b):
     data = common.scores.get_expected_result(player_a, player_b)
     return json.dumps({'scores': dict(zip((player_a, player_b), data))})
 

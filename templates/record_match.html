@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block js %}
+    <script src="/static/js/pingkong.js"></script>
+    <script>
+        var users = nil;
+        getAllUsers(function(data) { users = data; });
+    </script>
+{% endblock %}
+
+
+{% block main %}
+<h1>Record Match</h1>
+<form>
+    // make the name be a dropdown
+    <input type=text name=playera.name placeholder="player name"><input type=text name=playera.score placeholder="score"><br>
+    <input type=text name=playerb.name placeholder="player name"><input type=text name=playerb.score placeholder="score"><br>
+    <input type=submit value="record!">
+<form>
+{% endblock %}
