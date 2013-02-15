@@ -21,4 +21,12 @@ def ensure_collection_indexes(db):
 
 
 
-    # don't really need anything for users
+def add_test_users(db, user_tups):
+    col = db.users
+    for name, uid, is_test in user_tups:
+        doc = {
+            '_id' : uid,
+            'name' : name,
+            'is_test' : is_test
+        }
+        col.insert(doc)
