@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 
+{% block css %}
+<link rel="stylesheet" href="/static/css/pingkong.css">
+{% endblock %}
+
 {% block main %}
-<h1>Views</h1>
-<ul>
-    <li><a href="/leaderboard">Leaderboard</a></li>
-</ul>
+<div class="container">
+    <div class="pingkongcontent">
+        {% include "leaderboard.html" %}
+        {% include "record_match.html" %}
+    </div>
+</div>
 {% endblock %}

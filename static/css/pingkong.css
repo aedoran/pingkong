@@ -1,0 +1,11 @@
+body {
+    /*Padding to get below the bootstrap nav header*/
+    padding-top: 60px;
+    background-image: url(../img/pool_table.png);
+    background-repeat: repeat;
+}
+
+.pingkongcontent {
+        color: #e6e6e6;
+}
+

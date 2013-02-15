@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+<!-- {% extends "base.html" %} -->
 
 {% block js %}
     <script src="/static/js/pingkong.js"></script>
@@ -10,6 +10,7 @@
 
 
 {% block main %}
+<div id="record">
 <h1>Record Match</h1>
 <form>
     // make the name be a dropdown
@@ -17,4 +18,5 @@
     <input type=text name=playerb.name placeholder="player name"><input type=text name=playerb.score placeholder="score"><br>
     <input type=submit value="record!">
 <form>
+</div>
 {% endblock %}
