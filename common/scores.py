@@ -11,7 +11,11 @@ connection = MongoClient(
 def get_most_recent_score(player):
     col = connection.pingkong.scorings
     col.ensure_index([('ts', DESCENDING)])
-    res = col.find_one({'player': player}, sort=[('ts', DESCENDING),])
+    res = col.find_one(
+        spec = {'player': player}, 
+        fields = [('score'),], 
+        sort = [('ts', DESCENDING),]
+    )
     return res['score'] if res else 800 # obviously adjust this later
 
 def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id):
@@ -62,5 +66,8 @@ def get_expected_result_from_expected_score_frac(ex, play_till=21.0):
 
 def get_all_players(limit=0):
     connection.pingkong.scorings.ensure_index([('score', DESCENDING), ('player', ASCENDING)])
-    return connection.pingkong.scorings.find(sort=[('score', DESCENDING)], limit=limit).distinct('player')
+    return connection.pingkong.scorings.find(
+        sort=[('score', DESCENDING)], 
+        limit=limit
+    ).distinct('player')
 
