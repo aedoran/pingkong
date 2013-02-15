@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
 {% block js %}
-<script type="text/javascript">
-    $.getJSON('/leaderboard', function(data) {
-        var items = [];
-        
-        $.each(data.scores, function(key, val) {
-            items.push('<li><span class="name">' + val[0] + '</span> - <span class="score">' + val[1].toFixed(2) + '</score></li>');
-        });
-        
-        $('<ol/>', {
-            html: items.join('')
-        }).appendTo('#leaderboard');
-    });
-</script>
+    <script src="/static/js/pingkong.js"></script>
+    <script>
+        var leaderTemplate = new Template("<h1>#{user}</h1> - #{score}");
+        leaderboard(function(data) {
+            var html = []
+            jQuery.each(data, function(key, val) {
+                html.push(leaderTemplate.evaluate(val));
+            });
+            jQuery('<ol/>', {
+                html: html.join('')
+            }).appendTo('#leaderboard');
+        }, 10);
+    </script>
 {% endblock %}
 
 
