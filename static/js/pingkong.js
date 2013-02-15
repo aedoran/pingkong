@@ -39,3 +39,9 @@ function getAllUsers(callback, limit) {
         callback(data);
     });
 }
+
+function resolvePlayer(player_data, callback) {
+    jQuery.getJSON("/api/resolve_player/" + player_data.user, function(data) {
+        callback({user:player_data.user, score:player_data.score, name:data.name});
+    });
+}

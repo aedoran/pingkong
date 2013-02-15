@@ -3,11 +3,13 @@
 {% block js %}
     <script src="/static/js/pingkong.js"></script>
     <script>
-        var leaderTemplate = new Template("<h1>#{user}</h1> - #{score}");
+        var leaderTemplate = new Template("<h1 id=\"#{user}\">#{name}</h1> - #{score}");
         leaderboard(function(data) {
             var html = []
             jQuery.each(data, function(key, val) {
-                html.push(leaderTemplate.evaluate(val));
+                resolvePlayer(val, function(user_resolution_data) {
+                    html.push(leaderTemplate.evaluate(user_resolution_data));
+                })
             });
             jQuery('<ol/>', {
                 html: html.join('')
