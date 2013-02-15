@@ -1,5 +1,5 @@
 # from gevent import monkey; monkey.patch_all()
-from pymongo import MongoClient, DESCENDING, ASCENDING
+from pymongo import MongoClient, DESCENDING
 
 # Elo Params
 K = 20
@@ -10,7 +10,6 @@ connection = MongoClient(
 
 def get_most_recent_score(player):
     col = connection.pingkong.scorings
-    col.ensure_index([('ts', DESCENDING)])
     res = col.find_one(
         spec = {'player': player}, 
         fields = [('score'),], 
@@ -65,7 +64,6 @@ def get_expected_result_from_expected_score_frac(ex, play_till=21.0):
         return play_till
 
 def get_all_players(limit=0):
-    connection.pingkong.scorings.ensure_index([('score', DESCENDING), ('player', ASCENDING)])
     return connection.pingkong.scorings.find(
         sort=[('score', DESCENDING)], 
         limit=limit
