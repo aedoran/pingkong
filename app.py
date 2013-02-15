@@ -29,19 +29,6 @@ def index():
     """Render website's home page."""
     return render_template('index.html')
 
-@app.route('/leaderboard')
-def leaderboard():
-    return render_template('leaderboard.html')
-
-@app.route('/record_match')
-def record_match():
-    return render_template('record_match.html')
-
-@app.route('/about/')
-def about():
-    """Render the website's about page."""
-    return render_template('about.html')
-
 @app.route('/api/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>/')
 def api_record_match(player_a, score_a, player_b, score_b):
     ts = int(time.time())
