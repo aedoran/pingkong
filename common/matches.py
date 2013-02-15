@@ -7,7 +7,7 @@ def record_match(player_a, score_a, player_b, score_b, match_ts):
         (
             (player_a, score_a),
             (player_b, score_b),
-        ), key=operator.itemgetter(1)
+        ), key=operator.itemgetter(1), reverse=True
     )
     match = {
         'winner': winner,
