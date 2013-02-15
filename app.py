@@ -9,6 +9,7 @@ This file creates your application.
 from flask import Flask, render_template
 import common.matches
 import common.scores
+import common.users
 
 from operator import itemgetter
 import os
@@ -61,6 +62,13 @@ def api_predict(player_a, player_b):
     data = common.scores.get_expected_result(player_a, player_b)
     return json.dumps({'scores': dict(zip((player_a, player_b), data))})
 
+@app.route('/api/resolve_player/<player_id>')
+def resolve_player(player_id):
+    found = common.users.get_user(player_id, app.debug)
+    if found:
+        return json.dumps(found)
+    else:
+        return '{}', 404
 
 ###
 # The functions below should be applicable to all Flask apps.
