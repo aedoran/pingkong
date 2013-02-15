@@ -9,10 +9,9 @@ K = 20
 def get_most_recent_score(player):
 
     col = db.scorings
+    # a secondary index on ts guarantees that this will get us the most recent score
     res = col.find_one(
-        spec = {'player': player}, 
-        fields = [('score'),], 
-        sort = [('ts', DESCENDING),]
+        {'player': player}, 
     )
     return res['score'] if res else 800 # obviously adjust this later
 
