@@ -1,9 +1,6 @@
-from pymongo import MongoClient
 import operator
 
-connection = MongoClient(
-    # db details here...
-    )
+from mongo import db
 
 def record_match(player_a, score_a, player_b, score_b, match_ts):
     (winner, winner_score), (loser, loser_score) = sorted(
@@ -19,5 +16,5 @@ def record_match(player_a, score_a, player_b, score_b, match_ts):
         'loser_score': loser_score,
         'ts': match_ts
     }
-    oid = connection.pingkong.matches.insert(match)
+    oid = db.matches.insert(match)
     return oid
