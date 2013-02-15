@@ -25,7 +25,7 @@ function recordMatch(playera, playerb, callback) {
     });
 }
 
-var recordMatchUrlTemplate = new Template("/api/predict_match/#{playera.name}:#{playerb.name}");
+var predictMatchUrlTemplate = new Template("/api/predict_match/#{playera.name}:#{playerb.name}");
 function predictMatch(playera, playerb, callback) {
     var url = predictMatchUrlTemplate.evaluate({playera:playera, playerb:playerb})
     jQuery.getJSON(url, function(data) {
@@ -33,9 +33,9 @@ function predictMatch(playera, playerb, callback) {
     });
 }
 
-function getAllUsers(playera, playerb, callback) {
-    var url = predictMatchUrlTemplate.evaluate({playera:playera, playerb:playerb})
-    jQuery.getJSON(url, function(data) {
+function getAllUsers(callback, limit) {
+    limit = limit || 0;
+    jQuery.getJSON("/api/all_users/" + limit, function(data) {
         callback(data);
     });
 }

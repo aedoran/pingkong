@@ -3,18 +3,71 @@
 {% block js %}
     <script src="/static/js/pingkong.js"></script>
     <script>
-        var users = nil;
-        getAllUsers(function(data) { users = data; });
+        jQuery(".chzn-select").chosen({no_results_text: "User not found"});
+        function add_options(elem, opts) {
+            jQuery.each(opts, function(key, value) {   
+                 jQuery(elem)
+                     .append(jQuery("<option></option>")
+                     .attr("value", value.id)
+                     .text(value.name));
+            });
+            jQuery(elem)
+                .trigger("liszt:updated");
+        }
+        getAllUsers(function(data) { 
+            add_options("#playera_name", data);
+            add_options("#playerb_name", data);
+        });
+
+        function submit_scores() {
+            jQuery("#submit_status").html("Submitting....");
+            jQuery("#submit_button").prop("disabled", true);
+            var playerA = {name: jQuery("#playera_name").val(), score: jQuery("#playera_score").val()}
+            var playerB = {name: jQuery("#playerb_name").val(), score: jQuery("#playerb_score").val()}
+
+            if (playerA.score < 0) {
+                jQuery("#submit_status").html("Invalid score for player A");
+                jQuery("#submit_button").prop("disabled", false);
+            } else if (playerB.score < 0) {
+                jQuery("#submit_status").html("Invalid score for player B");
+                jQuery("#submit_button").prop("disabled", false);
+            } else if (playerA.name == "") {
+                jQuery("#submit_status").html("Invalid user for player A");
+                jQuery("#submit_button").prop("disabled", false);
+            } else if (playerB.name == "") {
+                jQuery("#submit_status").html("Invalid user for player B");
+                jQuery("#submit_button").prop("disabled", false);
+            }
+
+            recordMatch(playerA, playerB, function(d) {
+                jQuery("#submit_status").html("Recorded!").fadeOut(5000, function() {
+                    jQuery("#submit_status")
+                        .html("")
+                        .show();
+                });
+                jQuery("#submit_button").prop("disabled", false);
+            });
+
+
+        }
     </script>
 {% endblock %}
 
 
 {% block main %}
 <h1>Record Match</h1>
-<form>
-    // make the name be a dropdown
-    <input type=text name=playera.name placeholder="player name"><input type=text name=playera.score placeholder="score"><br>
-    <input type=text name=playerb.name placeholder="player name"><input type=text name=playerb.score placeholder="score"><br>
-    <input type=submit value="record!">
+<form action="#">
+    <select data-placeholder="player name" id="playera_name" class="chzn-select">
+        <option></option>
+    </select>
+    <input type=text id=playera_score placeholder="score">
+    <br>
+    <select id="playerb_name" class="chzn-select" data-placeholder="player name">
+        <option></option>
+    </select>
+    <input type=text id=playerb_score placeholder="score">
+    <br>
+    <button onClick="submit_scores();" id="submit_button">record!</button>
+    <div id="submit_status"></div>
 <form>
 {% endblock %}
