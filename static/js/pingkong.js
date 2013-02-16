@@ -5,7 +5,7 @@
 
 function leaderboard(callback, limit) {
     var limit = limit || 10;
-    jQuery.getJSON('/api/leaderboard', function(data) {
+    jQuery.getJSON('/api/leaderboard?' + Math.random(), function(data) {
         var items = [];
         
         jQuery.each(data.scores, function(key, val) {
@@ -16,20 +16,20 @@ function leaderboard(callback, limit) {
     });
 }
 
-var recordMatchUrlTemplate = new Template("/api/record_match/#{playera.name}:#{playerb.name}/#{playera.score}:#{playerb.score}");
+var recordMatchUrlTemplate = new Template("/api/record_match/#{playera.name}:#{playerb.name}/#{playera.score}:#{playerb.score}?");
 function recordMatch(playera, playerb, callback) {
     var limit = limit || 10;
-    var url = recordMatchUrlTemplate.evaluate({playera:playera, playerb:playerb});
+    var url = recordMatchUrlTemplate.evaluate({playera:playera, playerb:playerb}) + Math.random();
     jQuery.getJSON(url, function(data) {
         callback(data);
     });
 }
 
-var predictMatchUrlTemplate = new Template("/api/predict_match/#{playera.name}:#{playerb.name}");
+var predictMatchUrlTemplate = new Template("/api/predict_match/#{playera.name}:#{playerb.name}?");
 function predictMatch(playera, playerb, callback) {
-    var url = predictMatchUrlTemplate.evaluate({playera:playera, playerb:playerb})
+    var url = predictMatchUrlTemplate.evaluate({playera:playera, playerb:playerb}) + Math.random(); 
     jQuery.getJSON(url, function(data) {
-        callback(data);
+        callback(data.scores);
     });
 }
 

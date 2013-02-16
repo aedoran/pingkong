@@ -45,10 +45,23 @@
                 <div class="row">
                     <div class="record_submit span1 offset3">
                         <button class="btn" onClick="submit_scores();" id="submit_button">record!</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="record_submit span3 offset2">
                         <button class="btn btn-info" id="submit_status"></div>
                     </div>
                 </div>
             <form>
+        </div>
+
+        <div id="win_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header"><h3>Congratulations <span id="modal_winner"></span>!</h3></div>
+            <div class="modal-body">
+                <p>You won the game <h5><span id="modal_score" class="text-info"></span></h5></p>
+                <p>We thought the score would be <h5><span id="modal_predict" class="text-info"></span></h5></p>
+            </div>
+            <div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">cool</button></div>
         </div>
 
         {% include "rules.html" %}

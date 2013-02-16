@@ -2,7 +2,6 @@
     <script>
         function add_options(elem, opts) {
             jQuery.each(opts, function(key, value) {   
-                console.log("adding to ", elem)
                  jQuery(elem)
                      .append(jQuery("<option></option>")
                      .attr("value", value.id)
@@ -20,8 +19,8 @@
         function submit_scores() {
             jQuery("#submit_status").html("Submitting....").show();
             jQuery("#submit_button").prop("disabled", true);
-            var playerA = {name: jQuery("#playera_name").val(), score: jQuery("#playera_score").val()}
-            var playerB = {name: jQuery("#playerb_name").val(), score: jQuery("#playerb_score").val()}
+            var playerA = {name: jQuery("#playera_name").val(), user: jQuery("#playera_name option:selected").text(), score: Number(jQuery("#playera_score").val())}
+            var playerB = {name: jQuery("#playerb_name").val(), user: jQuery("#playerb_name option:selected").text(), score: Number(jQuery("#playerb_score").val())}
 
             if (playerA.score < 0) {
                 jQuery("#submit_status").html("Invalid score for player A");
@@ -36,6 +35,36 @@
                 jQuery("#submit_status").html("Invalid user for player B");
                 jQuery("#submit_button").prop("disabled", false);
             }
+
+            predictMatch(playerA, playerB, function(d) {
+                if (playerA.score > playerB.score) {
+                    var winner = playerA;
+                    var loser = playerB;
+                } else {
+                    var winner = playerB;
+                    var loser = playerA;
+                }
+                var max_score = winner.score;
+                var tie = false;
+                if (winner.score == loser.score) {
+                    tie = true;
+                }
+                if (! tie) {
+                    jQuery("#modal_winner").text(winner.user);
+                } else {
+                    jQuery("#modal_winner").text("you're both too good");
+                }
+                jQuery("#modal_score").text(winner.score + " vs " + loser.score);
+                jQuery("#modal_predict").text(
+                    (d[winner.name]*max_score/21.0).toFixed(1) + 
+                    " vs " + 
+                    (d[loser.name]*max_score/21.0).toFixed(1)
+                );
+
+                jQuery('#win_modal').modal({
+                    keyboard: true,
+                });
+            });
 
             recordMatch(playerA, playerB, function(d) {
                 update_leaderboard && update_leaderboard();

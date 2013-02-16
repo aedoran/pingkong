@@ -44,7 +44,7 @@ def api_leaderboard(limit):
     sorted_pairs = sorted(zip(players, recent_scores), key=itemgetter(1), reverse=True)
     return json.dumps({'scores': sorted_pairs})
 
-@app.route('/api/predict/<player_a>:<player_b>')
+@app.route('/api/predict_match/<player_a>:<player_b>')
 def api_predict(player_a, player_b):
     data = common.scores.get_expected_result(player_a, player_b)
     return json.dumps({'scores': dict(zip((player_a, player_b), data))})
