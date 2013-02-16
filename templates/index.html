@@ -14,7 +14,8 @@
 <div class="container">
     <div class="pingkongcontent">
         <div class="container">
-            <h1>Leaderboard</h1><button class="btn btn-info btn-mini pull-right" onClick="update_leaderboard()">update</button>
+            <h1 class="inline">Leaderboard</h1>
+            <a href="#" class="btn btn-info btn-mini pull-right" onClick="update_leaderboard()"><i class="icon-refresh icon-white"></i></a>
             <div class="xsmall_vspace">&nbsp;</div>
             <div id="leaderboard">
             </div>
@@ -24,18 +25,29 @@
             <div class="small_vspace">&nbsp;</div>
             <h1>Record Match</h1>
             <form action="#">
-                <select data-placeholder="player name" id="playera_name" class="chzn-select">
-                    <option></option>
-                </select>
-                <input type=text id=playera_score placeholder="score">
-                <br>
-                <select id="playerb_name" class="chzn-select" data-placeholder="player name">
-                    <option></option>
-                </select>
-                <input type=text id=playerb_score placeholder="score">
-                <br>
-                <button class="btn" onClick="submit_scores();" id="submit_button">record!</button>
-                <button class="btn btn-info" id="submit_status"></div>
+                <div class="row-fluid">
+                    <div class="record_playera span3">
+                        <select data-placeholder="player name" id="playera_name" class="chzn-select record_form">
+                            <option></option>
+                        </select><br>
+                        <input type=text id=playera_score placeholder="score" class="record_form">
+                    </div>
+                    <div class="record_vs span1 visible-desktop">VERSUS</div>
+                    <div class="record_vs span1 visible-tablet">VS</div>
+                    <div class="record_vs span1 visible-phone">vs</div>
+                    <div class="record_playerb span3">
+                        <select id="playerb_name" class="chzn-select record_form" data-placeholder="player name">
+                            <option></option>
+                        </select><br>
+                        <input type=text id=playerb_score placeholder="score" class="record_form">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="record_submit span1 offset3">
+                        <button class="btn" onClick="submit_scores();" id="submit_button">record!</button>
+                        <button class="btn btn-info" id="submit_status"></div>
+                    </div>
+                </div>
             <form>
         </div>
 

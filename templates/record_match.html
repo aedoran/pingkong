@@ -8,7 +8,7 @@
                      .attr("value", value.id)
                      .text(value.name));
             });
-            jQuery(elem).chosen({no_results_text: "User not found"});
+            jQuery(elem).chosen({no_results_text: "User not found", inherit_select_classes: true});
             //jQuery(elem)
             //    .trigger("liszt:updated");
         }
