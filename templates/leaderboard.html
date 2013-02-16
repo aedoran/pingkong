@@ -1,22 +1,27 @@
 {% block js %}
     <script>
         var leaderTemplate = new Template("<tr><td>#{n}</td><td id='ldr#{user}'>#{user}</td><td>#{score}</td></tr>");
-        leaderboard(function(data) {
-            var html = ["<tr><td>#</td><td>name</td><td>score</td></tr>"]
-            jQuery.each(data, function(key, val) {
-                val.n = key+1;
-                val.score = val.score.toFixed(2);
-                html.push(leaderTemplate.evaluate(val));
-                resolvePlayer(val, function(user_resolution_data) {
-                    jQuery("#ldr"+user_resolution_data.user).text(user_resolution_data.name);
+        function update_leaderboard() {
+            jQuery("#leaderboard").html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div> </div>');
+            leaderboard(function(data) {
+                var html = ["<tr><td>#</td><td>name</td><td>score</td></tr>"]
+                jQuery.each(data, function(key, val) {
+                    val.n = key+1;
+                    val.score = val.score.toFixed(2);
+                    html.push(leaderTemplate.evaluate(val));
+                    resolvePlayer(val, function(user_resolution_data) {
+                        jQuery("#ldr"+user_resolution_data.user).text(user_resolution_data.name);
+                    })
+                });
+                jQuery("#leaderboard").html("");
+                jQuery("<table/>", {
+                    html: html.join('')
                 })
-            });
-            jQuery('<table/>', {
-                html: html.join('')
-            })
-                .addClass("table table-condensed")
-                .appendTo('#leaderboard');
-        }, 10);
+                    .addClass("table table-condensed")
+                    .appendTo('#leaderboard');
+            }, 10);
+        }
+        update_leaderboard();
     </script>
 {% endblock %}
 

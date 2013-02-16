@@ -38,6 +38,7 @@
             }
 
             recordMatch(playerA, playerB, function(d) {
+                update_leaderboard && update_leaderboard();
                 jQuery("#submit_status").html("Recorded!").fadeOut(10000, function() {
                     jQuery("#submit_status")
                         .html("");

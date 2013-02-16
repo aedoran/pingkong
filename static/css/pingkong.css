@@ -1,8 +1,13 @@
 body {
-    /*Padding to get below the bootstrap nav header*/
-    padding-top: 60px;
     background-image: url(../img/pool_table.png);
     background-repeat: repeat;
+    padding-top: 60px;
+}
+
+@media (max-width: 979px) {
+    body {
+        padding-top: 0px;
+    }
 }
 
 .pingkongcontent {
@@ -23,6 +28,10 @@ body {
 
 .small_vspace {
     height: 50px;
+}
+
+.xsmall_vspace {
+    height: 25px;
 }
 
 #submit_status {
