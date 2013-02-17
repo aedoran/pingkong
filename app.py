@@ -66,6 +66,9 @@ def api_resolve_player(player_id):
     else:
         return '{}', 404
 
+def api_create_user(player_id, name):
+    common.users.create_user(player_id, name)
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
