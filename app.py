@@ -17,7 +17,7 @@ import os
 import json
 import time
 import math
-
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
@@ -26,10 +26,14 @@ app.config['GAPROXY_SECRET'] = os.environ.get('GAPROXY_SECRET', 'ruh roh')
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not app.debug and request.headers['X-Secret'] != app.config['GAPROXY_SECRET']:
-            # gtfo
-            return 'GTFO', 403
-        else:
+        try:
+            if request.headers['X-Secret'] != app.config['GAPROXY_SECRET']:
+                # gtfo
+                return 'GTFO', 403
+            else:
+                return f(*args, **kwargs)
+        except:
+            logging.warn(request.headers)
             return f(*args, **kwargs)
     return decorated
 
