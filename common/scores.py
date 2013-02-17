@@ -13,7 +13,7 @@ def get_most_recent_score(player):
     res = col.find_one(
         {'player': player}, 
     )
-    return res['score'] if res else 800 # obviously adjust this later
+    return res['score'] if res else 1000 
 
 
 def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id):
