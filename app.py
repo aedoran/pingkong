@@ -6,7 +6,7 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import common.matches
 import common.scores
 import common.users
@@ -23,12 +23,21 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
 app.config['GAPROXY_SECRET'] = os.environ.get('GAPROXY_SECRET', 'ruh roh')
 
+
+def authenticated():
+    '''
+    Tests whether we are currently authenticated with GAProxy.
+
+    Or just returns true if in debug mode
+    '''
+    return app.debug or request.headers.get('X-Secret') == app.config['GAPROXY_SECRET']
+
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if request.headers.get('X-Secret') != app.config['GAPROXY_SECRET']:
+        if not authenticated():
             # gtfo
-            return 'GTFO', 403
+            return redirect(os.environ.get('GAPROXY_URL'))
         else:
             logging.warn("Authenticated! %s" % request.authorization.username)
             return f(*args, **kwargs)
