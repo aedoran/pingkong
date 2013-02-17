@@ -15,6 +15,7 @@ from operator import itemgetter
 import os
 import json
 import time
+import math
 
 
 app = Flask(__name__)
@@ -31,6 +32,9 @@ def index():
 
 @app.route('/api/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>/')
 def api_record_match(player_a, score_a, player_b, score_b):
+    diff = math.abs(score_a - score_b)
+    if diff > 21:
+        return 'PREPOSTEROUS', 400
     ts = int(time.time())
     match_id = common.matches.record_match(player_a, score_a, player_b, score_b, ts)
     common.scores.update_scores(player_a, score_a, player_b, score_b, ts, match_id)
