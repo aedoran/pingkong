@@ -26,14 +26,11 @@ app.config['GAPROXY_SECRET'] = os.environ.get('GAPROXY_SECRET', 'ruh roh')
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        try:
-            if request.headers['X-Secret'] != app.config['GAPROXY_SECRET']:
-                # gtfo
-                return 'GTFO', 403
-            else:
-                return f(*args, **kwargs)
-        except:
-            logging.warn(request.headers)
+        if request.headers.get('X-Secret') != app.config['GAPROXY_SECRET']:
+            # gtfo
+            return 'GTFO', 403
+        else:
+            logging.warn("Authenticated! %s" % request.authorization.username)
             return f(*args, **kwargs)
     return decorated
 
