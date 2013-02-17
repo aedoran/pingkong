@@ -84,7 +84,10 @@ def api_resolve_player(player_id):
     else:
         return '{}', 404
 
+@requires_auth
 def api_create_user(player_id, name):
+    if not common.users.get_user(request.authorization.username).get('is_admin', False):
+        return 'NO', 403
     common.users.create_user(player_id, name)
 
 ###
