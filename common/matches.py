@@ -2,13 +2,18 @@ import operator
 
 from mongo import db
 
-def record_match(player_a, score_a, player_b, score_b, match_ts):
+class Cheating(Exception):
+    pass
+
+def record_match(player_a, score_a, player_b, score_b, match_ts, reporter=None):
     (winner, winner_score), (loser, loser_score) = sorted(
         (
             (player_a, score_a),
             (player_b, score_b),
         ), key=operator.itemgetter(1), reverse=True
     )
+    if winner == reporter:
+        raise Cheating()
     match = {
         'winner': winner,
         'loser': loser,

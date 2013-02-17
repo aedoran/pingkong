@@ -60,7 +60,10 @@ def api_record_match(player_a, score_a, player_b, score_b):
     if diff > 21:
         return 'PREPOSTEROUS', 400
     ts = int(time.time())
-    match_id = common.matches.record_match(player_a, score_a, player_b, score_b, ts)
+    try:
+        match_id = common.matches.record_match(player_a, score_a, player_b, score_b, ts)
+    except common.matches.Cheating:
+        return "CHEATING", 400
     common.scores.update_scores(player_a, score_a, player_b, score_b, ts, match_id)
     return json.dumps("OK")
 
