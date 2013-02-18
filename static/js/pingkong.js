@@ -35,7 +35,7 @@ function predictMatch(playera, playerb, callback) {
 
 function getAllUsers(callback, limit) {
     limit = limit || 0;
-    jQuery.getJSON("/api/all_users/", function(data) {
+    jQuery.getJSON("/api/all_users/" + limit, function(data) {
         callback(data);
     });
 }
