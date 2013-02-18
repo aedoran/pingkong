@@ -4,8 +4,8 @@
 //
 
 function leaderboard(callback, limit) {
-    var limit = limit || 10;
-    jQuery.getJSON('/api/leaderboard?' + Math.random(), function(data) {
+    limit = limit || 10;
+    jQuery.getJSON('/api/leaderboard/' + limit + '?' + Math.random(), function(data) {
         var items = [];
         
         jQuery.each(data.scores, function(key, val) {
@@ -27,7 +27,7 @@ function recordMatch(playera, playerb, callback) {
 
 var predictMatchUrlTemplate = new Template("/api/predict_match/#{playera.name}:#{playerb.name}?");
 function predictMatch(playera, playerb, callback) {
-    var url = predictMatchUrlTemplate.evaluate({playera:playera, playerb:playerb}) + Math.random(); 
+    var url = predictMatchUrlTemplate.evaluate({playera:playera, playerb:playerb}) + Math.random();
     jQuery.getJSON(url, function(data) {
         callback(data.scores);
     });

@@ -70,7 +70,7 @@ def api_record_match(player_a, score_a, player_b, score_b):
     common.scores.update_scores(player_a, score_a, player_b, score_b, ts, match_id)
     return json.dumps("OK")
 
-@app.route('/api/leaderboard/', defaults={'limit' : 10})
+# @app.route('/api/leaderboard/', defaults={'limit' : 10})
 @app.route('/api/leaderboard/<int:limit>')
 @requires_auth
 def api_leaderboard(limit):
@@ -85,7 +85,7 @@ def api_predict(player_a, player_b):
     data = common.scores.get_expected_result(player_a, player_b)
     return json.dumps({'scores': dict(zip((player_a, player_b), data))})
 
-@app.route('/api/all_users/', defaults={'limit' : 0})
+# @app.route('/api/all_users/', defaults={'limit' : 0})
 @app.route('/api/all_users/<int:limit>')
 @requires_auth
 def api_all_users(limit):
