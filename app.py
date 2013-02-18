@@ -38,10 +38,7 @@ def requires_auth(f):
             # gtfo
             return redirect(os.environ.get('GAPROXY_URL'))
         else:
-            try:
-                logging.warn("Authenticated! %s" % request.authorization.username)
-            except:
-                pass
+            logging.warn("Authenticated! %s" % getattr(request.authorization, 'username', ''))
             return f(*args, **kwargs)
     return decorated
 
@@ -62,8 +59,10 @@ def api_record_match(player_a, score_a, player_b, score_b):
     if diff > 21:
         return 'PREPOSTEROUS', 400
     ts = int(time.time())
+    reporter = getattr(request.authorization, 'username', '')
     try:
-        match_id = common.matches.record_match(player_a, score_a, player_b, score_b, ts)
+        match_id = common.matches.record_match(
+            player_a, score_a, player_b, score_b, ts, reporter)
     except common.matches.Cheating:
         return "CHEATING", 400
     common.scores.update_scores(player_a, score_a, player_b, score_b, ts, match_id)
