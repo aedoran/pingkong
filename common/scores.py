@@ -1,10 +1,12 @@
 # from gevent import monkey; monkey.patch_all()
 from pymongo import  DESCENDING
+import os
 
 from mongo import db
 
 # Elo Params
-K = 20
+K = int(os.environ['ELO_K'])
+ELO_DEF = int(os.environ['ELO_DEF'])
 
 def get_most_recent_score(player):
 
@@ -13,7 +15,7 @@ def get_most_recent_score(player):
     res = col.find_one(
         {'player': player}, 
     )
-    return res['score'] if res else 1000 
+    return res['score'] if res else ELO_DEF 
 
 
 def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id):
