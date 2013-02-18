@@ -15,8 +15,7 @@ from operator import itemgetter
 import os
 import json
 import time
-import math
-
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
@@ -32,7 +31,7 @@ def index():
 
 @app.route('/api/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>/')
 def api_record_match(player_a, score_a, player_b, score_b):
-    diff = math.abs(score_a - score_b)
+    diff = abs(score_a - score_b)
     if diff > 21:
         return 'PREPOSTEROUS', 400
     ts = int(time.time())
