@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% include "_formhelpers.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/pingkong.css">
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="pingkongcontent">
+        {% from "_formhelpers.html" import render_field %}
+        <form method="post" action="/admin">
+          <dl>
+            {{ render_field(form.name) }}
+            {{ render_field(form.uid) }}
+          </dl>
+          <p><input type="submit" value="Create User">
+        </form>
+    </div>
+</div>
+{% endblock %}

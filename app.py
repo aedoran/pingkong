@@ -7,6 +7,8 @@ This file creates your application.
 """
 
 from flask import Flask, render_template, request, redirect
+from flask.ext.wtf import Form, TextField, Required
+
 import common.matches
 import common.scores
 import common.users
@@ -44,6 +46,16 @@ def requires_auth(f):
         else:
             logging.warn("Authenticated! %s" % getattr(request.authorization, 'username', ''))
             return f(*args, **kwargs)
+    return decorated
+
+def admin_only(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        # lookup user and see if they are admin
+        user_info = common.users.get_user(getattr(request.authorization, 'username', ''))
+        if not(app.debug or user_info and user_info.get('is_admin', False)):
+            return 'GTFO', 403
+        return f(*args, **kwargs)
     return decorated
 
 ###
@@ -149,11 +161,25 @@ def api_score_timeline(player_id):
     vis += ({'value' : '#c1251f'}, 'marks', 0, 'properties', 'update', 'fill')
     return json.dumps(vis.vega)
 
+# Admin stuff
+
+@app.route('/admin', methods=['GET', 'POST'])
+@requires_auth
+@admin_only
+def admin():
+    form = CreateUserForm(request.form)
+    if request.method == 'POST' and form.validate():
+        common.users.create_user(form.id.data, form.name.data)
+        return redirect('/admin')
+    return render_template('admin.html', form=form)
+
+class CreateUserForm(Form):
+    name = TextField('name', validators=[Required()])
+    uid = TextField('uid', validators=[Required()])
 
 @requires_auth
+@admin_only
 def api_create_user(player_id, name):
-    if not common.users.get_user(request.authorization.username).get('is_admin', False):
-        return 'NO', 403
     common.users.create_user(player_id, name)
 
 ###
