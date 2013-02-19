@@ -1,5 +1,6 @@
 import pymongo
 
+
 def ensure_collection_indexes(db):
     matches = db.matches
     # { _id, winner: df, loser: josh, ts: 1234, ...}
@@ -30,3 +31,20 @@ def add_test_users(db, user_tups):
             'is_test' : is_test
         }
         col.insert(doc)
+
+def rebuild_matches(db):
+    import common.scores
+    db.drop_collection('scorings')
+
+    ensure_collection_indexes(db)
+
+    for match in db.matches.find(sort=[('ts',1)]):
+        common.scores.update_scores(
+            match['winner'],
+            match['winner_score'],
+            match['loser'],
+            match['loser_score'],
+            match['ts'],
+            match['_id'],
+            db
+            )

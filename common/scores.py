@@ -18,7 +18,7 @@ def get_most_recent_score(player):
     return res['score'] if res else ELO_DEF 
 
 
-def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id):
+def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id, _db=db):
     # http://en.wikipedia.org/wiki/Elo_rating_system#Mathematical_details
 
     # TODO - could parallelize this lookup with gevent...
@@ -33,7 +33,7 @@ def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id):
     new_R_a = R_a + K * (S_a - E_a)
     new_R_b = R_b + K * (S_b - E_b)
 
-    col = db.scorings
+    col = _db.scorings
     def mk_scorings_doc((player, score)):
         return {
             'player': player,
