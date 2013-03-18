@@ -111,6 +111,22 @@
                         });
         }
         drawRecentScorings("{{ player_id }}");
+
+
+        function getRecentMatches(player_id) {
+            var recentMatchTemplate = new Template("<li>#{outcome} #{score}-#{opp_score} vs #{opponent}</li>");
+            jQuery.getJSON("/api/recent_matches/" + player_id + "/5", function(data) {
+                var html = [];
+                jQuery.each(data, function(key, val) {
+                    html.push(recentMatchTemplate.evaluate(val))
+                });
+                jQuery("<ul/>", {
+                    html: html.join('')
+                })
+                    .appendTo('#recent_matches');
+            })
+        }
+        getRecentMatches("{{ player_id }}");
     </script>
 {% endblock %}
 
@@ -119,7 +135,13 @@
     <div class="pingkongcontent">
         <div class="container">
             <div id="player_header"></div>
-            <div id="recent_scorings_chart"></div>
+            <div class="small_vspace">&nbsp;</div>
+            <div id="recent_scorings_chart">
+                <h3>Score Trendline</h3>
+            </div>
+            <div id="recent_matches">
+                <h3>Recent Matches</h3>
+            </div>
         </div>
     </div>
 </div>

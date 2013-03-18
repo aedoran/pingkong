@@ -6,10 +6,7 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from gevent import monkey, spawn, joinall
-monkey.patch_all()
-
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect
 import common.matches
 import common.scores
 import common.users
@@ -21,7 +18,6 @@ import os
 import json
 import time
 import logging
-import urllib2 # TODO get internet and change this out
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
@@ -130,6 +126,23 @@ def api_recent_scorings(player_id, limit):
     keys_to_return = ['score', 'ts', 'match_id']
     display = [dict((k,v) for k,v in m.iteritems() if k in keys_to_return) for m in converted]
     return json.dumps(sorted(display, key=itemgetter('ts')))
+
+@app.route('/api/recent_matches/<player_id>/<int:limit>')
+@requires_auth
+def api_recent_matches(player_id, limit):
+    def transform_record(rec):
+        new_rec = {'ts': rec['ts']}
+        if rec['winner'] == player_id:
+            new_rec.update({'score': rec['winner_score'], 'opponent': rec['loser'], 'opp_score' : rec['loser_score'], 'outcome' : 'win'})
+        else:
+            new_rec.update({'score': rec['loser_score'], 'opponent': rec['winner'], 'opp_score' : rec['winner_score'], 'outcome' : 'loss'})
+        return new_rec
+    records = common.matches.recent_matches(player_id, limit)
+    new_records = map(transform_record, records)
+    return json.dumps(new_records)
+
+
+
 
 @requires_auth
 def api_create_user(player_id, name):
