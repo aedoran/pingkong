@@ -6,10 +6,14 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from flask import Flask, render_template, request, redirect
+from gevent import monkey, spawn, joinall
+monkey.patch_all()
+
+from flask import Flask, render_template, request, redirect, url_for
 import common.matches
 import common.scores
 import common.users
+import common.util
 
 from operator import itemgetter
 from functools import wraps
@@ -17,6 +21,7 @@ import os
 import json
 import time
 import logging
+import urllib2 # TODO get internet and change this out
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
@@ -51,6 +56,22 @@ def requires_auth(f):
 def index():
     """Render website's home page."""
     return render_template('index.html')
+
+@app.route('/player/<player_id>')
+def player_page(player_id):
+    # print 'making api call'
+    # url = url_for('api_resolve_player', player_id=player_id, _external=True)
+    # print url
+    # player_info_task = spawn(lambda: json.loads(urllib2.urlopen(url).read()))
+    # # recent_scorings = json.loads()
+    # player_info_task.join()
+    # try:
+    #     player_info = player_info_task.get()
+    # except Exception, e:
+    #     logging.exception(e)
+    #     raise
+    # return json.dumps(player_info)
+    return render_template('player.html', player_id=player_id)
 
 @app.route('/api/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>')
 @requires_auth
@@ -94,11 +115,21 @@ def api_all_users(limit):
 @app.route('/api/resolve_player/<player_id>')
 @requires_auth
 def api_resolve_player(player_id):
+    print 'handling api call'
     found = common.users.get_user(player_id, app.debug)
     if found:
         return json.dumps(found)
     else:
         return '{}', 404
+
+@app.route('/api/recent_scorings/<player_id>/<int:limit>')
+@requires_auth
+def api_recent_scorings(player_id, limit):
+    from_mongo = common.scores.get_most_recent_scorings(player_id, limit)
+    converted = [common.util.stringify_bson(m) for m in from_mongo]
+    keys_to_return = ['score', 'ts', 'match_id']
+    display = [dict((k,v) for k,v in m.iteritems() if k in keys_to_return) for m in converted]
+    return json.dumps(sorted(display, key=itemgetter('ts')))
 
 @requires_auth
 def api_create_user(player_id, name):

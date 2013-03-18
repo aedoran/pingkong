@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/pingkong.css">
+{% endblock %}
+
+{% block js %}
+    <script>
+        var playerHeaderTemplate = new Template("<h1>#{name}</h1>")
+        function getPlayerHeader(player_id) {
+            var player_data = {"user": player_id, "score":0};
+            resolvePlayer(player_data, function(data) {
+                jQuery(playerHeaderTemplate.evaluate(data))
+                    .addClass('inline')
+                    .appendTo('#player_header');
+            });
+        }
+        getPlayerHeader("{{ player_id }}");
+
+        // ohhh shit here comes the d3 shit
+        function drawRecentScorings(player_id) {
+            d3.json("/api/recent_scorings/" + player_id + "/10", function(data1) {
+                var maxval = 0,
+                    minval = 100000,
+                    sampsize = 0;
+                var label_array = new Array(),
+                    val_array1 = new Array();
+                sampsize = data1.length;
+                for (var i=0; i < sampsize; i++) {
+                   label_array[i] = parseInt(data1[i].ts);
+                   val_array1[i] = { x: label_array[i], y: data1[i].score}; // TODO could add match_id as another attribute here
+                    maxval = Math.max(maxval, data1[i].score);
+                    minval = Math.min(minval, data1[i].score);
+                }
+
+
+                // Nice bounds
+                maxval = (1 + Math.floor(maxval / 10)) * 10;
+                minval = (-1 + Math.ceil(minval / 10)) * 10;
+
+                var  w = 815,
+                    h = 500,
+                    p = 40,
+                    x = d3.scale.linear().domain([ label_array[0], label_array[sampsize-1] ]).range([0, w]),
+                    y = d3.scale.linear().domain([minval, maxval]).range([h, 0]);
+
+                var vis = d3.select("#recent_scorings_chart")
+                   .data([val_array1])
+                 .append("svg:svg")
+                   .attr("width", w + p * 2)
+                   .attr("height", h + p * 2)
+                 .append("svg:g")
+                   .attr("transform", "translate(" + p + "," + p + ")");
+
+                // Some rules crap around ticks and shit
+               var rules = vis.selectAll("g.rule")
+                  .data(x.ticks(15))
+                 .enter().append("svg:g")
+                   .attr("class", "rule");
+
+               // Draw grid lines
+               rules.append("svg:line")
+                .attr("x1", x)
+                .attr("x2", x)
+                .attr("y1", 0)
+                .attr("y2", h - 1);
+
+               rules.append("svg:line")
+                .attr("class", function(d) { return d ? null : "axis"; })
+                .data(y.ticks(10))
+                .attr("y1", y)
+                .attr("y2", y)
+                .attr("x1", 0)
+                .attr("x2", w - 10);
+
+               // Place axis tick labels
+               rules.append("svg:text")
+                .attr("x", x)
+                .attr("y", h + 15)
+                .attr("dy", ".71em")
+                .attr("text-anchor", "middle")
+                .text(x.tickFormat(10))
+                .text(String);
+
+               rules.append("svg:text")
+                .data(y.ticks(12))
+                .attr("y", y)
+                .attr("x", -10)
+                .attr("dy", ".35em")
+                .attr("text-anchor", "end")
+                .text(y.tickFormat(5));
+
+                // Actual lines...
+                vis.append("svg:path")
+                   .attr("class", "line")
+                   .attr("fill", "none")
+                   .attr("stroke", "white")
+                   .attr("stroke-width", 2)
+                   .attr("d", d3.svg.line()
+                     .x(function(d) { return x(d.x); })
+                     .y(function(d) { return y(d.y); }));
+
+                vis.selectAll("circle.line")
+                   .data(val_array1)
+                 .enter().append("svg:circle")
+                   .attr("class", "line")
+                   .attr("fill", "white" )
+                   .attr("cx", function(d) { return x(d.x); })
+                   .attr("cy", function(d) { return y(d.y); })
+                   .attr("r", 1);
+                        });
+        }
+        drawRecentScorings("{{ player_id }}");
+    </script>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="pingkongcontent">
+        <div class="container">
+            <div id="player_header"></div>
+            <div id="recent_scorings_chart"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -8,6 +8,15 @@ from mongo import db
 K = int(os.environ['ELO_K'])
 ELO_DEF = int(os.environ['ELO_DEF'])
 
+def get_most_recent_scorings(player, limit):
+    col = db.scorings
+    # a secondary index on ts guarantees that this will get us the most recent score
+    res = list(col.find(
+        {'player': player}, 
+        limit=limit
+    ))
+    return res
+
 def get_most_recent_score(player):
 
     col = db.scorings
