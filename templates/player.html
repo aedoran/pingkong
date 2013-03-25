@@ -75,12 +75,12 @@
 
                // Place axis tick labels
                rules.append("svg:text")
+                .data(x.ticks(7))
                 .attr("x", x)
                 .attr("y", h + 15)
                 .attr("dy", ".71em")
                 .attr("text-anchor", "middle")
-                .text(x.tickFormat(10))
-                .text(String);
+                .text(function(ts) { return new Date(ts * 1000).toLocaleDateString()});
 
                rules.append("svg:text")
                 .data(y.ticks(12))
