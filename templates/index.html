@@ -56,10 +56,20 @@
         </div>
 
         <div id="win_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-header"><h3>Congratulations <span id="modal_winner"></span>!</h3></div>
+            <div class="modal-header success">
+              <h3 class="success">Congratulations to <span id="modal_winner"></span>!</h3>
+              <h3 class="error">Error!</h3>
+            </div>
             <div class="modal-body">
+                <div class="success">
                 <p>You won the game <h5><span id="modal_score" class="text-info"></span></h5></p>
                 <p>We thought the score would be <h5><span id="modal_predict" class="text-info"></span></h5></p>
+                </div>
+                <div class="error">
+                  <p>
+                    Sorry, the winner of this game is not permitted to submit the score. No changes have been recorded.
+                  </p>
+                </div>
             </div>
             <div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">cool</button></div>
         </div>
