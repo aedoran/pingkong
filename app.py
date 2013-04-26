@@ -72,7 +72,7 @@ def api_record_match(player_a, score_a, player_b, score_b):
 @app.route('/api/leaderboard/<int:limit>')
 @requires_auth
 def api_leaderboard(limit):
-    score_window = 1209600 # seconds in two weeks
+    score_window = 1814400 # seconds in three weeks
     scored_since = int(time.time() - score_window)
     players = common.scores.get_all_players(scored_since=scored_since)
     recent_scores = map(common.scores.get_most_recent_score, players)
