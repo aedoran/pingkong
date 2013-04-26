@@ -64,8 +64,9 @@ def get_expected_result_from_expected_score_frac(ex, play_till=21.0):
     else:
         return play_till
 
-def get_all_players(limit=0):
+def get_all_players(limit=0, scored_since=0):
     return db.scorings.find(
+        {'ts': {'$gt': scored_since}},
         sort=[('score', DESCENDING)], 
         limit=limit
     ).distinct('player')
