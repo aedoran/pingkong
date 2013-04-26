@@ -83,7 +83,8 @@ def api_leaderboard(limit):
 @requires_auth
 def api_predict(player_a, player_b):
     data = common.scores.get_expected_result(player_a, player_b)
-    return json.dumps({'scores': dict(zip((player_a, player_b), data))})
+    return json.dumps({'scores': dict(zip((player_a, player_b), data)), 
+                       'current_user': request.authorization.username})
 
 # @app.route('/api/all_users/', defaults={'limit' : 0})
 @app.route('/api/all_users/<int:limit>')

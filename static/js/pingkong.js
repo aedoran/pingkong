@@ -29,7 +29,7 @@ var predictMatchUrlTemplate = new Template("/api/predict_match/#{playera.name}:#
 function predictMatch(playera, playerb, callback) {
     var url = predictMatchUrlTemplate.evaluate({playera:playera, playerb:playerb}) + Math.random();
     jQuery.getJSON(url, function(data) {
-        callback(data.scores);
+        callback(data);
     });
 }
 

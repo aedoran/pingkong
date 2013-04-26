@@ -36,6 +36,8 @@
                 jQuery("#submit_button").prop("disabled", false);
             }
 
+            var has_error = false;
+
             predictMatch(playerA, playerB, function(d) {
                 if (playerA.score > playerB.score) {
                     var winner = playerA;
@@ -56,25 +58,39 @@
                 }
                 jQuery("#modal_score").text(winner.score + " vs " + loser.score);
                 jQuery("#modal_predict").text(
-                    (d[winner.name]*max_score/21.0).toFixed(1) + 
+                    (d.scores[winner.name]*max_score/21.0).toFixed(1) + 
                     " vs " + 
-                    (d[loser.name]*max_score/21.0).toFixed(1)
+                    (d.scores[loser.name]*max_score/21.0).toFixed(1)
                 );
 
-                jQuery('#win_modal').modal({
+                var $win_modal = jQuery('#win_modal');
+                if (d.current_user != winner.name ){
+                  $win_modal.find(".error").hide(); 
+                  $win_modal.find(".success").show();
+
+                  recordMatch(playerA, playerB, function(d) {
+                    update_leaderboard && update_leaderboard();
+                    jQuery("#submit_status")
+                      .html("Recorded!")
+                      .fadeOut(10000, function() {
+                        jQuery("#submit_status")
+                        .html("");
+                      });
+                  });
+                } 
+                else {
+                  $win_modal.find(".error").show();
+                  $win_modal.find(".success").hide();
+                }
+
+                $win_modal.modal({
                     keyboard: true,
                 });
-            });
-
-            recordMatch(playerA, playerB, function(d) {
-                update_leaderboard && update_leaderboard();
-                jQuery("#submit_status").html("Recorded!").fadeOut(10000, function() {
-                    jQuery("#submit_status")
-                        .html("");
+                $win_modal.on('hidden', function(){ 
+                  jQuery("#submit_button").prop("disabled", false);
+                  jQuery("#submit_status").hide();
                 });
-                jQuery("#submit_button").prop("disabled", false);
             });
-
 
         }
     </script>
