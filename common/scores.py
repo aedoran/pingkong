@@ -32,7 +32,7 @@ def get_most_recent_score(player, before=None):
     res = col.find_one(query)
     return res['score'] if res else ELO_DEF 
 
-def get_score_timeline(player, since):
+def get_score_timeline(player, since, smooth=True):
     '''
     This will return a pandas timeseries of scores from `since` until the present.
     Pray
@@ -43,8 +43,10 @@ def get_score_timeline(player, since):
     timestamps = [since] + map(ig('ts'), recent_scorings)
     time_index = pd.DatetimeIndex(np.array(timestamps, dtype='M8[s]'))
     series = pd.TimeSeries(scores, time_index)
-    resampled = series.resample('1h', fill_method='pad')
-    return resampled
+    resampled = series.resample('1h')
+    interp = resampled.interpolate('time')
+    smoothed = pd.ewma(interp, span=24)
+    return smoothed if smooth else interp
 
 
 def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id, _db=db):
