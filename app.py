@@ -18,11 +18,14 @@ import os
 import json
 import time
 import logging
+import vincent
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
 app.config['GAPROXY_SECRET'] = os.environ.get('GAPROXY_SECRET', 'ruh roh')
 app.debug = bool(int(os.environ.get('PINGKONGDEV', 0)))
+
+SECONDS_IN_3_WEEKS = 1814400 # seconds in three weeks
 
 def authenticated():
     '''
@@ -53,6 +56,9 @@ def index():
     """Render website's home page."""
     return render_template('index.html')
 
+@app.route('/player/<player_id>')
+def player_page(player_id):
+    return render_template('player.html', player_id=player_id)
 
 @app.route('/api/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>')
 @requires_auth
@@ -74,7 +80,7 @@ def api_record_match(player_a, score_a, player_b, score_b):
 @app.route('/api/leaderboard/<int:limit>')
 @requires_auth
 def api_leaderboard(limit):
-    score_window = 1814400 # seconds in three weeks
+    score_window = SECONDS_IN_3_WEEKS
     scored_since = int(time.time() - score_window)
     players = common.scores.get_all_players(scored_since=scored_since)
     recent_scores = map(common.scores.get_most_recent_score, players)
@@ -117,7 +123,25 @@ def api_recent_matches(player_id, limit):
     new_records = map(transform_record, records)
     return json.dumps(new_records)
 
+@app.route('/api/score_timeline/<player_id>')
+@requires_auth
+def api_score_timeline(player_id):
+    score_series = common.scores.get_score_timeline(player_id, int(time.time()) - SECONDS_IN_3_WEEKS)
+    vis = vincent.Area()
+    vis.tabular_data(score_series, axis_time='day')
+    # vis += ({'value': 'basis'}, 'marks', 0, 'properties', 'enter', 'interpolate')
+    vis += ({'labels': {'angle': {'value': 25}}}, 'axes', 0, 'properties')
+    vis += ({'value': 22}, 'axes', 0, 'properties', 'labels', 'dx')
+    vis.update_vis(padding={'bottom': 50, 'left': 60, 'right': 30, 'top': 10})
+    vis.update_vis(width=700)
 
+    # here we go..
+    # determine the bottom limit - pad below by a bit, and truncate to mult of 10
+    domain_min = round((score_series.min() - 10) / 10.0) * 10
+    vis += (False, 'scales', 1, 'zero')
+    vis += (domain_min, 'scales', 1, 'domainMin')
+    vis += (domain_min, 'marks', 0, 'properties', 'enter', 'y2', 'value')
+    return json.dumps(vis.vega)
 
 
 @requires_auth
