@@ -10,7 +10,6 @@
         function parse(spec) {
           vg.parse.spec(spec, function(chart) { chart({el:"#score_timeline"}).update(); });
         }
-        parse("/api/score_timeline/{{ player_id }}");
         function getRecentMatches(player_id) {
             var recentMatchTemplate = new Template("<li>#{outcome} #{score}-#{opp_score} vs #{opponent}</li>");
             jQuery.getJSON("/api/recent_matches/" + player_id + "/5", function(data) {
@@ -24,12 +23,15 @@
                     .appendTo('#recent_matches');
             })
         }
-        getRecentMatches("{{ player_id }}");
+        function fillInModal(player_id) {
+          parse("/api/score_timeline/" + player_id );
+          getRecentMatches(player_id);
+        }
     </script>
 {% endblock %}
 
 {% block main %}
-<div class="container">
+<!-- <div class="container">
     <div class="pingkongcontent">
         <div class="container">
             <div id="player_header"></div>
@@ -42,5 +44,25 @@
             </div>
         </div>
     </div>
+</div> -->
+<div class="container">
+<a href="#" onClick="$('#player_modal').modal('show'); fillInModal({{ player_id }});">{{ player_id }}</a>
+<div id="player_modal" class="modal hide">
+  <div class="pingkongcontent">
+        <div class="container">
+            <div id="player_header" class="modal-header">
+              <a href="#" class="close">&times;</a>
+            </div>
+            <div class="small_vspace">&nbsp;</div>
+            <div id="score_timeline">
+                <h3>Score Timeline</h3>
+            </div>
+            <div id="recent_matches">
+                <h3>Recent Matches</h3>
+            </div>
+        </div>
+  </div>
 </div>
+</div>
+
 {% endblock %}
