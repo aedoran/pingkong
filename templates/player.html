@@ -46,7 +46,8 @@
     </div>
 </div> -->
 <div class="container">
-<a href="#" onClick="$('#player_modal').modal('show'); fillInModal({{ player_id }});">{{ player_id }}</a>
+<a href="#player_modal" onClick="$('player_modal').modal('show'); fillInModal({{ player_id }});">{{ player_id }}</a>
+</div>
 <div id="player_modal" class="modal hide">
   <div class="pingkongcontent">
         <div class="container">
@@ -62,7 +63,6 @@
             </div>
         </div>
   </div>
-</div>
 </div>
 
 {% endblock %}
