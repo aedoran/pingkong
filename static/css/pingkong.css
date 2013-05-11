@@ -70,3 +70,11 @@ body .playermodal {
     color: #1a1a1a;
     padding: 20px;
 }
+
+body .playermodalheader {
+    padding:9px 0px;
+}
+
+.recent_match {
+    text-transform:capitalize;
+}
