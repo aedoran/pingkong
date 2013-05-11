@@ -18,10 +18,11 @@
                     // console.log(jQuery('#ldr' + data['opponent']).html) TODO fetch full name from table, when in main
                     html.push(recentMatchTemplate.evaluate(val))
                 });
-                jQuery("<ul/>", {
-                    html: html.join('')
-                })
-                    .appendTo('#recent_matches');
+                jQuery('#recent_matches').html(
+                    jQuery("<ul/>", {
+                        html: html.join('')
+                    })
+                    )
             })
         }
         function fillInModal(player_id) {
