@@ -1,6 +1,9 @@
 # from gevent import monkey; monkey.patch_all()
 from pymongo import  DESCENDING
 import os
+import numpy as np
+import pandas as pd
+from operator import itemgetter as ig
 
 from mongo import db
 
@@ -8,14 +11,42 @@ from mongo import db
 K = int(os.environ['ELO_K'])
 ELO_DEF = int(os.environ['ELO_DEF'])
 
-def get_most_recent_score(player):
+def get_recent_scorings(player, since):
+    col = db.scorings
+    # a secondary index on ts guarantees that this will get us the most recent score
+    res = list(col.find(
+        {
+        'player': player,
+        'ts': {'$gt': since}
+        }, 
+    ))
+    return res
+
+def get_most_recent_score(player, before=None):
 
     col = db.scorings
     # a secondary index on ts guarantees that this will get us the most recent score
-    res = col.find_one(
-        {'player': player}, 
-    )
+    query = {'player': player}
+    if before:
+        query['ts'] = {'$lt':before}
+    res = col.find_one(query)
     return res['score'] if res else ELO_DEF 
+
+def get_score_timeline(player, since, smooth=True):
+    '''
+    This will return a pandas timeseries of scores from `since` until the present.
+    Pray
+    '''
+    initial_score = get_most_recent_score(player, before=since)
+    recent_scorings = list(reversed(get_recent_scorings(player, since)))
+    scores = [initial_score] + map(ig('score'), recent_scorings)
+    timestamps = [since] + map(ig('ts'), recent_scorings)
+    time_index = pd.DatetimeIndex(np.array(timestamps, dtype='M8[s]'))
+    series = pd.TimeSeries(scores, time_index)
+    resampled = series.resample('1h')
+    interp = resampled.interpolate('time')
+    smoothed = pd.ewma(interp, span=24)
+    return smoothed if smooth else interp
 
 
 def update_scores(player_a, score_a, player_b, score_b, match_ts, match_id, _db=db):

@@ -7,7 +7,6 @@ function leaderboard(callback, limit) {
     limit = limit || 10;
     jQuery.getJSON('/api/leaderboard/' + limit + '?' + Math.random(), function(data) {
         var items = [];
-        
         jQuery.each(data.scores, function(key, val) {
             items.push({user:val[0], score:val[1]});
         });

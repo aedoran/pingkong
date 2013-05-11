@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/pingkong.css">
+{% endblock %}
+
+{% block js %}
+    <script>
+        // parse a spec and create a visualization view
+        function parse(spec) {
+          vg.parse.spec(spec, function(chart) { chart({el:"#score_timeline"}).update(); });
+        }
+        function getRecentMatches(player_id) {
+            var recentMatchTemplate = new Template("<li class='recent_match'>#{outcome} #{score}-#{opp_score} vs #{opponent_name}</li>");
+            jQuery.getJSON("/api/recent_matches/" + player_id + "/5", function(data) {
+                var html = [];
+                jQuery.each(data, function(key, val) {
+                    // console.log(jQuery('#ldr' + data['opponent']).html) TODO fetch full name from table, when in main
+                    val['opponent_name'] = jQuery('#ldr' + val['opponent']).text()
+                    html.push(recentMatchTemplate.evaluate(val))
+                });
+                jQuery('#recent_matches_list').html(
+                    jQuery("<ul/>", {
+                        html: html.join('')
+                    })
+                    )
+            })
+        }
+        function fillInModal(player_id) {
+          parse("/api/score_timeline/" + player_id );
+          getRecentMatches(player_id);
+          jQuery('#player_name').text(jQuery('#ldr' + player_id).text())
+        }
+    </script>
+{% endblock %}
+
+{% block main %}
+<!-- <div class="container">
+<a href="#player_modal" onClick="jQuery('#player_modal').modal('show'); fillInModal('{{ player_id }}');">{{ player_id }}</a>
+</div> -->
+<div id="player_modal" class="playermodal modal hide">
+    <div id="player_header" class="playermodalheader modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="player_name"></h3>
+    </div>
+    <div id="score_timeline">
+        <h3>Score Timeline</h3>
+    </div>
+    <div id="recent_matches">
+        <h3>Recent Matches</h3>
+        <div id="recent_matches_list"></div>
+    </div>
+</div>
+
+{% endblock %}

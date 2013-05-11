@@ -1,6 +1,8 @@
 {% block js %}
+    {% include "player.html" %}
     <script>
         var leaderTemplate = new Template("<tr><td>#{n}</td><td id='ldr#{user}'>#{user}</td><td>#{score}</td></tr>");
+        var playerEntryTemplate = new Template("<a href='#' onClick=\"jQuery('#player_modal').modal('show'); fillInModal('#{user}');\">#{name}</a>")
         function update_leaderboard() {
             jQuery("#leaderboard").html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div> </div>');
             leaderboard(function(data) {
@@ -10,14 +12,14 @@
                     val.score = val.score.toFixed(2);
                     html.push(leaderTemplate.evaluate(val));
                     resolvePlayer(val, function(user_resolution_data) {
-                        jQuery("#ldr"+user_resolution_data.user).text(user_resolution_data.name);
+                        jQuery("#ldr"+user_resolution_data.user).html(playerEntryTemplate.evaluate(user_resolution_data));
                     })
                 });
                 jQuery("#leaderboard").html("");
                 jQuery("<table/>", {
                     html: html.join('')
                 })
-                    .addClass("table table-condensed")
+                    .addClass("table table-condensed leaderboard_table")
                     .appendTo('#leaderboard');
             }, 10);
         }

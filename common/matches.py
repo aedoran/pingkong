@@ -23,3 +23,9 @@ def record_match(player_a, score_a, player_b, score_b, match_ts, reporter=None):
     }
     oid = db.matches.insert(match)
     return oid
+
+def recent_matches(player_id, limit):
+    col = db.matches
+    query = {'$or' : [{'winner': player_id}, {'loser' : player_id}]}
+    res = col.find(query, sort=[('ts',-1)], limit=limit)
+    return list(res)
