@@ -129,10 +129,9 @@ def api_score_timeline(player_id):
     score_series = common.scores.get_score_timeline(player_id, int(time.time()) - SECONDS_IN_3_WEEKS)
     vis = vincent.Area()
     vis.tabular_data(score_series, axis_time='day')
-    # vis += ({'value': 'basis'}, 'marks', 0, 'properties', 'enter', 'interpolate')
     vis += ({'labels': {'angle': {'value': 25}}}, 'axes', 0, 'properties')
     vis += ({'value': 22}, 'axes', 0, 'properties', 'labels', 'dx')
-    vis.update_vis(padding={'bottom': 50, 'left': 60, 'right': 30, 'top': 10})
+    vis.update_vis(padding={'bottom': 50, 'left': 60, 'right': 40, 'top': 10})
     vis.update_vis(width=700)
 
     # here we go..
@@ -141,6 +140,12 @@ def api_score_timeline(player_id):
     vis += (False, 'scales', 1, 'zero')
     vis += (domain_min, 'scales', 1, 'domainMin')
     vis += (domain_min, 'marks', 0, 'properties', 'enter', 'y2', 'value')
+
+    # colors..
+    # remove the hover color change, it is stupid
+    vis -= ('hover', 'marks', 0, 'properties')
+    # and change the main color to red because I wanna
+    vis += ({'value' : '#c1251f'}, 'marks', 0, 'properties', 'update', 'fill')
     return json.dumps(vis.vega)
 
 

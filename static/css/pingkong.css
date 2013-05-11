@@ -61,3 +61,12 @@ body {
         text-align: left;
     }
 }
+
+body .playermodal {
+    width: 800px;
+    margin-left: -400px;
+    background-image: url(../img/purty_wood.png);
+    background-repeat: repeat;
+    color: #1a1a1a;
+    padding: 20px;
+}
