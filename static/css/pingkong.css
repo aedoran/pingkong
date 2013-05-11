@@ -73,6 +73,7 @@ body .playermodal {
 
 body .playermodalheader {
     padding:9px 0px;
+    border-bottom: 1px solid #1a1a1a;
 }
 
 .recent_match {
