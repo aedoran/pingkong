@@ -78,3 +78,8 @@ body .playermodalheader {
 .recent_match {
     text-transform:capitalize;
 }
+
+.leaderboard_table a {
+    text-decoration: underline;
+    color: #f5f5f5;
+}
