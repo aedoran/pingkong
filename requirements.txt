@@ -26,4 +26,3 @@ pymongo==2.4.1
 numpy==1.7.1
 pandas==0.11.0
 git+git://github.com/wrobstory/vincent.git
-ipython==0.13.1
