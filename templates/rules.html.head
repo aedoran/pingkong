@@ -1,0 +1,3 @@
+{% block main %}
+<div id="rules" class="pingkongcontent">
+    <div class="small_vspace">&nbsp;</div>
