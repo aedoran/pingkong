@@ -7,7 +7,7 @@ This file creates your application.
 """
 
 from flask import Flask, render_template, request, redirect
-from flask.ext.wtf import Form, TextField, Required
+from flask.ext.wtf import Form, TextField, DataRequired
 
 import common.matches
 import common.scores
@@ -29,6 +29,9 @@ app.debug = bool(int(os.environ.get('PINGKONGDEV', 0)))
 
 SECONDS_IN_3_WEEKS = 1814400 # seconds in three weeks
 
+def _current_user():
+    return getattr(request.authorization, 'username', '')
+
 def authenticated():
     '''
     Tests whether we are currently authenticated with GAProxy.
@@ -44,7 +47,7 @@ def requires_auth(f):
             # gtfo
             return redirect(os.environ.get('GAPROXY_URL'))
         else:
-            logging.warn("Authenticated! %s" % getattr(request.authorization, 'username', ''))
+            logging.warn("Authenticated! %s" % _current_user())
             return f(*args, **kwargs)
     return decorated
 
@@ -52,7 +55,7 @@ def admin_only(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         # lookup user and see if they are admin
-        user_info = common.users.get_user(getattr(request.authorization, 'username', ''))
+        user_info = common.users.get_user(_current_user())
         if not(app.debug or user_info and user_info.get('is_admin', False)):
             return 'GTFO', 403
         return f(*args, **kwargs)
@@ -79,7 +82,7 @@ def api_record_match(player_a, score_a, player_b, score_b):
     if diff > 21:
         return 'PREPOSTEROUS', 400
     ts = int(time.time())
-    reporter = getattr(request.authorization, 'username', '')
+    reporter = _current_user()
     try:
         match_id = common.matches.record_match(
             player_a, score_a, player_b, score_b, ts, reporter)
@@ -104,7 +107,7 @@ def api_leaderboard(limit):
 def api_predict(player_a, player_b):
     data = common.scores.get_expected_result(player_a, player_b)
     return json.dumps({'scores': dict(zip((player_a, player_b), data)), 
-                       'current_user': request.authorization.username})
+                       'current_user': _current_user()})
 
 # @app.route('/api/all_users/', defaults={'limit' : 0})
 @app.route('/api/all_users/<int:limit>')
@@ -167,15 +170,16 @@ def api_score_timeline(player_id):
 @requires_auth
 @admin_only
 def admin():
-    form = CreateUserForm(request.form)
+    form = CreateUserForm(request.form, csrf_enabled=False)
     if request.method == 'POST' and form.validate():
-        common.users.create_user(form.id.data, form.name.data)
+        common.users.create_user(form.uid.data, form.name.data)
+        logging.warn('%s created user %s' % (_current_user(), form.uid.data))
         return redirect('/admin')
     return render_template('admin.html', form=form)
 
 class CreateUserForm(Form):
-    name = TextField('name', validators=[Required()])
-    uid = TextField('uid', validators=[Required()])
+    name = TextField('name', validators=[DataRequired()])
+    uid = TextField('uid', validators=[DataRequired()])
 
 @requires_auth
 @admin_only

@@ -76,6 +76,10 @@ body .playermodalheader {
     border-bottom: 1px solid #1a1a1a;
 }
 
+label {
+    color: #f5f5f5;
+}
+
 .recent_match {
     text-transform:capitalize;
 }
