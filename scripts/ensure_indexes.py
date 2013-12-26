@@ -22,13 +22,13 @@ def ensure_collection_indexes(db):
 
 
 
-def add_test_users(db, user_tups):
+def add_users(db, user_tups):
     col = db.users
-    for name, uid, is_test in user_tups:
+    for name, uid, is_admin in user_tups:
         doc = {
             '_id' : uid,
             'name' : name,
-            'is_test' : is_test
+            'is_admin' : is_admin
         }
         col.insert(doc)
 
