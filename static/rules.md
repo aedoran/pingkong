@@ -1,4 +1,4 @@
-# Official Bitly Ping Pong "Rules"
+# Official {{ org }} Ping Pong "Rules"
 
 * Shots off the wall are most definitely in
 * Normal game is to 11, changing serve every 2 points

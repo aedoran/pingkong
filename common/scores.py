@@ -8,8 +8,8 @@ from operator import itemgetter as ig
 from mongo import db
 
 # Elo Params
-K = int(os.environ['ELO_K'])
-ELO_DEF = int(os.environ['ELO_DEF'])
+K = int(os.environ.get('ELO_K', 32))
+ELO_DEF = int(os.environ.get('ELO_DEF', 1000))
 
 def get_recent_scorings(player, since):
     col = db.scorings

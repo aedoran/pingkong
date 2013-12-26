@@ -27,6 +27,8 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configur
 app.config['GAPROXY_SECRET'] = os.environ.get('GAPROXY_SECRET', 'ruh roh')
 app.debug = bool(int(os.environ.get('PINGKONGDEV', 0)))
 
+ORGNAME = os.environ.get('ORGNAME', 'Bitly')
+
 SECONDS_IN_3_WEEKS = 1814400 # seconds in three weeks
 
 def _current_user():
@@ -69,11 +71,11 @@ def admin_only(f):
 @requires_auth
 def index():
     """Render website's home page."""
-    return render_template('index.html')
+    return render_template('index.html', org=ORGNAME)
 
 @app.route('/player/<player_id>')
 def player_page(player_id):
-    return render_template('player.html', player_id=player_id)
+    return render_template('player.html', player_id=player_id, org=ORGNAME)
 
 @app.route('/api/record_match/<player_a>:<player_b>/<int:score_a>:<int:score_b>')
 @requires_auth
@@ -175,7 +177,7 @@ def admin():
         common.users.create_user(form.uid.data, form.name.data)
         logging.warn('%s created user %s' % (_current_user(), form.uid.data))
         return redirect('/admin')
-    return render_template('admin.html', form=form)
+    return render_template('admin.html', form=form, org=ORGNAME)
 
 class CreateUserForm(Form):
     name = TextField('name', validators=[DataRequired()])
@@ -203,8 +205,7 @@ def add_header(response):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    """Custom 404 page."""
-    return render_template('404.html'), 404
+    return redirect('http://bukk.it/invalid.jpg')
 
 
 if __name__ == '__main__':
